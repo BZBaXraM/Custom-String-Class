@@ -47,17 +47,9 @@ public:
         delete[] _text;
     }
 
-    friend ostream &operator<<(ostream &os, const myString &other) {
-        os << other._text;
-        return os;
-    }
+    friend ostream &operator<<(ostream &os, const myString &other);
 
-    friend istream &operator>>(istream &in, myString &other) {
-        in >> other._text;
-
-        return in;
-    }
-
+    friend istream &operator>>(istream &in, myString &other);
 
     char &front();
 
@@ -274,6 +266,17 @@ bool myString::operator==(const myString &other) {
         return false;
     }
 }
+
+ostream &operator<<(ostream &os, const myString &other) {
+    os << other._text;
+    return os;
+}
+
+istream &operator>>(istream &in, myString &other) {
+    in >> other._text;
+    return in;
+}
+
 
 int main() {
     // Надир муэллим, проверьте все, что возможно.
