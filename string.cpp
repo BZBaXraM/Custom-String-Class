@@ -77,8 +77,6 @@ public:
 
     myString append(const char *text);
 
-    myString &push_back(char c);
-
     int compare(const myString right); // Не смог
 
     const char *print() const { return _text; }
@@ -222,12 +220,6 @@ myString myString::append(const char *text) {
 
     strncat(_text, text, strlen(text));
 
-    return *this;
-}
-
-myString &myString::push_back(char c) {
-    char tmp[] = {c, 0};
-    append(tmp);
     return *this;
 }
 
