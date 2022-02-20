@@ -32,10 +32,6 @@ public:
 
     bool &operator<(const myString &other);
 
-    bool &operator>=(const myString &other);
-
-    bool &operator<=(const myString &other);
-
     bool operator==(const myString &other);
 
     char &operator[](int index) {
@@ -50,6 +46,8 @@ public:
     friend ostream &operator<<(ostream &os, const myString &other);
 
     friend istream &operator>>(istream &in, myString &other);
+
+    myString &cin(char c);
 
     char &front();
 
@@ -89,11 +87,12 @@ public:
 
 myString &myString::operator=(const myString &other) {
     if (this != &other) {
-        delete[] _text;
-        _text = other._text;
+        if (_text)
+            delete[] _text;
+        _text = new char[other._length];
+        strcpy(_text, other._text);
         _length = other._length;
         _capacity = other._capacity;
-
     }
     return *this;
 }
@@ -112,27 +111,21 @@ void myString::setText(const char *text) {
 }
 
 myString &myString::operator+(const myString &other) {
-    if (this != &other) {
-        delete[] _text;
-        _text = other._text;
-        _length = other._length;
-        _capacity = other._capacity;
+    char *tmp = _text;
+    _text = new char[other._length + _length];
+    if (tmp) {
+        strcpy(_text, tmp);
+        delete[] tmp;
     }
+    strcpy(_text + _length, other._text);
+    _length += other._length;
+    _capacity += other._capacity;
+
     return *this;
 }
 
 myString &myString::operator+=(const myString &other) {
-    _length += other._length;
-
-    if (other._length >= _capacity) {
-        _capacity = other._length * 2;
-        delete[] _text;
-        _text = new char[_capacity];
-    }
-
-    strncat(_text, other._text, strlen(other._text));
-
-    return *this;
+    return *this + other;
 }
 
 
@@ -205,21 +198,18 @@ myString::myString(const myString &other) {
     _length = other._length;
     _text = new char[_length + 1];
     strcpy(_text, other._text);
-    cout << "Copy Constructor is called " << endl;
+//    cout << "Copy Constructor is called " << endl;
 
 }
 
 myString myString::append(const char *text) {
-    _length += strlen(text);
+    myString tmp(text);
+    return *this += tmp;
+}
 
-    if (_length >= _capacity) {
-        _capacity = _length * 2;
-        delete[] _text;
-        _text = new char[_capacity];
-    }
-
-    strncat(_text, text, strlen(text));
-
+myString &myString::cin(char c) {
+    char tmp[] = {c, 0};
+    append(tmp);
     return *this;
 }
 
@@ -265,60 +255,71 @@ ostream &operator<<(ostream &os, const myString &other) {
 }
 
 istream &operator>>(istream &in, myString &other) {
-    in >> other._text;
+    char temp;
+    do {
+        temp = in.get();
+        if (temp == '\n' || temp == '\0')
+            break;
+        other.cin(temp);
+    } while (true);
     return in;
 }
 
 
 int main() {
-    // Надир муэллим, проверьте все, что возможно.
-//    cout << "\t\tCustom String Class by Bahram Bayramzade " << endl;
 
-    // myString str = ("Bahram");
-    // myString str2 = str; // Copy constructor is working!
-    // cout << str2.print(); // Print copy…
-//    cout << "\n";
-//    cout << str.print() << endl;
-//    cout << str2.print();
-//
-//    cout << "\n";
-//    myString str3;
-//    str3 = "STEP ";
-//    str3 += "IT"; // перегпузка +=
-//    str3 += " Academy";
-//    str3.printStr();
-//
-//    cout << "\n";
-//    myString str4;
-//    str4 + "Abdullah"; // перегпузка +
-//    str4.printStr();
-//
-//    cout << "\n";
-//    myString str5;
-//    str5 = "Moquda";
-//    str5.shrink_to_fit();
-//    str5.printStr();
+    cout << "\t\tCustom String Class by Bahram Bayramzade " << endl;
 
-//
-//    myString s(5, 'a'); Работает !
-//    s.printStr();
-//
-//        myString indexStr("Bahram");
-//        cout << indexStr[3] << endl; // Работает!
+    myString str = ("Bahram");
+    myString str2 = str; // Copy constructor is working!
+    cout << str2.print(); // Print copy…
+    cout << "\n";
+    cout << str.print() << endl;
+    cout << str2.print();
+
+    cout << "\n";
+    myString str3;
+    str3 = "STEP ";
+    str3 += "IT"; // перегпузка +=
+    str3 += " Academy";
+    str3.printStr();
+
+    myString name;
+    cin >> name;
+    cout << "Hello, " << name << endl; // Работает!!!!!
+
+    cout << "\n";
+    myString str4;
+    str4 + "Abdullah"; // перегпузка +
+    str4.printStr();
+
+    cout << "\n";
+    myString str5;
+    str5 = "Moquda";
+    str5.shrink_to_fit();
+    str5.printStr();
 
 
-//    cout << str.at(1); //Работает!
-//    str.resize(4); Работает!
-//    cout << str;
-//    cout << str.size(); Работает!
-//
+    myString s(5, 'a'); //Работает !
+    s.printStr();
 
-//    myString s = "Salam";
-//    s.reserve(10);
-//    cout << s.print();
+    myString indexStr("Bahram");
+    cout << indexStr[3] << endl; // Работает!
 
-//
-//    myString s2(10, 'a'); // Второй тес
-//    cout << s2.print();
+
+    cout << str.at(1); //Работает!
+    str.resize(4); //Работает!
+    cout << str;
+    cout << str.size(); //Работает!
+
+
+    myString sl = "Salam";
+    sl.reserve(10);
+    cout << sl.print();
+
+
+    myString s2(10, 'a'); // Второй тест
+    cout << s2.print();
+    
     return 0;
 }
